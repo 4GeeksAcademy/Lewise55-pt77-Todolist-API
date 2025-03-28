@@ -4,14 +4,21 @@
 // When there are no tasks the list should say "No tasks, add a task"
 // There is no way to update a task, the user will have to delete and create again.
 
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
+
+//view list of todos
+//allow for items on the list to be added and removed 
+//save and access todos to an API
+//update (done) put request to false
 
 
-//create your first component
 const Home = () => {
 	const [toDoList, setToDoList] = useState([]);
 	const [task, setTask] = useState("");
 
+	useEffect = (() => {}, [])
+
+	// Adds item to list
 	const addToList = (e) => {
         e.preventDefault();
 		let toDo = {value: task, done: false}
@@ -21,6 +28,7 @@ const Home = () => {
         }
     };
 	
+	// Removes item from list
 	const removeToDo = (i) => {
 		const newToDoList = toDoList.filter((toDo, index) => index !==i);
 		setToDoList(newToDoList);
