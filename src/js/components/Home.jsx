@@ -23,12 +23,12 @@ const Home = () => {
 	// Adds item to list
 	const addToList = async (e) => {
         e.preventDefault();
-		let response = await fetch("https://playground.4geeks.com/todo/users/Lewise55", {
+		let response = await fetch("https://playground.4geeks.com/todo/todos/Lewise55", {
 			method: "POST",
 			headers: { "Content-type": "application/json" },
 			body: JSON.stringify({ 
 				label: task,
-				done: false
+				is_done: false
 			})
 		})
         if (task.trim() !== "") {
@@ -45,7 +45,7 @@ const Home = () => {
 	// update the toDoList with the api todos[]
 	const crossOut = async (toDo) => {
 			let id = toDo.id;
-			let response = await fetch("https://playground.4geeks.com/todo/todos/23", {
+			let response = await fetch("https://playground.4geeks.com/todo/todos/" + id, {
 				method: "PUT",
 				headers: { "Content-type": "application/json" },
 				body: JSON.stringify({ 
