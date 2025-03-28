@@ -14,51 +14,80 @@ import React, {useState, useEffect} from "react";
 
 const Home = () => {
 	const [toDoList, setToDoList] = useState([]);
-	const [task, setTask] = useState("");
+	const [task, setTask] = useState("");	
 
 	useEffect(() => {
 		getUser();
 	}, []);
 
 	// Adds item to list
-	const addToList = (e) => {
+	const addToList = async (e) => {
         e.preventDefault();
-		let toDo = {value: task, done: false}
+		let response = await fetch("https://playground.4geeks.com/todo/users/Lewise55", {
+			method: "POST",
+			headers: { "Content-type": "application/json" },
+			body: JSON.stringify({ 
+				label: task,
+				done: false
+			})
+		})
         if (task.trim() !== "") {
-            setToDoList([...toDoList, toDo]);
-            setTask(""); 
+            // setToDoList([...toDoList, toDo]);
+			let data = await response.json()
+            setTask("")
+			getUser()
         }
+
+		
+		
     };
 	
+	// update the toDoList with the api todos[]
+	const crossOut = async (toDo) => {
+			let id = toDo.id;
+			let response = await fetch("https://playground.4geeks.com/todo/todos/23", {
+				method: "PUT",
+				headers: { "Content-type": "application/json" },
+				body: JSON.stringify({ 
+					label: toDo.label,
+					is_done: !toDo.is_done
+				})			
+			});
+			let data = await response.json();
+			getUser()
+		};
+	
 	// Removes item from list
-	const removeToDo = (i) => {
-		const newToDoList = toDoList.filter((toDo, index) => index !==i);
-		setToDoList(newToDoList);
-	}
+	const removeToDo = async (id) => {
+		let response = await fetch("https://playground.4geeks.com/todo/todos/" + id, {
+			method: "DELETE",
+			headers: { "Content-type": "application/json" }
+		})
+		let data = await response.json()
+		getUser()
+
+	};
+	
 
 	const getUser = async() => {
 		let response = await fetch("https://playground.4geeks.com/todo/users/Lewise55")
 		let data = await response.json()
-		console.log(data);
-		
 		if(typeof data.name != 'undefined'){
-			setToDoList(data.todos);
-			console.log(data.name);	
-		}else if(typeof data.detail != 'undefined'){
+			setToDoList(data.todos);	
+		}
+		else if(typeof data.detail != 'undefined'){
 			let response = await fetch("https://playground.4geeks.com/todo/users/Lewise55",{
 				method: "POST",
     			headers: { "Content-type": "application/json" },
 				
 			});
 			let data = await response.json()
-			console.log(data);
 			
 		}
 
 	};
 	
 	console.log(toDoList);
-	
 	
 	return (
 		<div className="text-center m-auto py-5">
@@ -77,7 +106,14 @@ const Home = () => {
 				) : (
 					toDoList?.map((toDo, index) => {
 						if(toDo.done != true) {
-							return <li key={index}>{toDo.label} <span onClick={() => removeToDo(index)}>❌</span></li>
+							return (
+								<li key={index} className={toDo.is_done == true ? "text-decoration-line-through" : ""}> 
+									{toDo.label} 
+									<input type="checkbox" onChange={() => crossOut(toDo)} checked={toDo.done == true ? "checked" : ""}/> 
+									<span onClick={() => removeToDo(toDo.id)}>❌</span>
+								</li>
+							);
+								
 						}							
 					})				
 				)}
