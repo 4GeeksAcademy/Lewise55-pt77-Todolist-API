@@ -16,7 +16,9 @@ const Home = () => {
 	const [toDoList, setToDoList] = useState([]);
 	const [task, setTask] = useState("");
 
-	useEffect = (() => {}, [])
+	useEffect(() => {
+		getUser();
+	}, []);
 
 	// Adds item to list
 	const addToList = (e) => {
@@ -33,6 +35,27 @@ const Home = () => {
 		const newToDoList = toDoList.filter((toDo, index) => index !==i);
 		setToDoList(newToDoList);
 	}
+
+	const getUser = async() => {
+		let response = await fetch("https://playground.4geeks.com/todo/users/Lewise55")
+		let data = await response.json()
+		console.log(data);
+		
+		if(typeof data.name != 'undefined'){
+			setToDoList(data.todos);
+			console.log(data.name);	
+		}else if(typeof data.detail != 'undefined'){
+			let response = await fetch("https://playground.4geeks.com/todo/users/Lewise55",{
+				method: "POST",
+    			headers: { "Content-type": "application/json" },
+				
+			});
+			let data = await response.json()
+			console.log(data);
+			
+		}
+
+	};
 	
 	console.log(toDoList);
 	
@@ -54,7 +77,7 @@ const Home = () => {
 				) : (
 					toDoList?.map((toDo, index) => {
 						if(toDo.done != true) {
-							return <li key={index}>{toDo.value} <span onClick={() => removeToDo(index)}>❌</span></li>
+							return <li key={index}>{toDo.label} <span onClick={() => removeToDo(index)}>❌</span></li>
 						}							
 					})				
 				)}
